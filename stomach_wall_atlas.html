@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinding Lambung, dalam Empat Lapis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EDE7D9;
+    --paper-2: #E4DCC8;
+    --paper-3: #DFD6BE;
+    --ink: #26241F;
+    --ink-soft: #6B6355;
+    --rule: #C9BFA8;
+    --mucosa: #B5474F;
+    --submucosa: #C99A3C;
+    --muscularis: #4F6B58;
+    --serosa: #3F5A6B;
+    --shadow: 0 10px 34px rgba(38,36,31,0.16);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* subtle paper grain */
+  body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(38,36,31,0.02) 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(38,36,31,0.02) 0, transparent 40%);
+    z-index: 0;
+  }
+
+  .eyebrow{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  header.hero{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 64px 32px 40px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+
+  header.hero .plate-no{
+    display: inline-block;
+    margin-bottom: 18px;
+  }
+
+  h1{
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(34px, 5vw, 58px);
+    line-height: 1.05;
+    margin: 0 0 20px;
+    max-width: 16ch;
+    letter-spacing: -0.01em;
+  }
+
+  h1 em{
+    font-style: italic;
+    font-weight: 400;
+    color: var(--muscularis);
+  }
+
+  .dek{
+    max-width: 56ch;
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  main{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 32px 100px;
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) 1fr;
+    gap: 56px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- LEFT: 3D VIEWER ---------- */
+  aside{
+    position: sticky;
+    top: 28px;
+    align-self: start;
+  }
+
+  .specimen-frame{
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .specimen-frame .inner-rule{
+    border: 1px solid var(--ink);
+    padding: 3px;
+  }
+
+  .viewer-wrap{
+    position: relative;
+    width: 100%;
+    padding-top: 118%;
+    background: #d9d0b8;
+    overflow: hidden;
+  }
+
+  .viewer-wrap iframe{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .specimen-caption{
+    margin-top: 14px;
+    padding: 0 4px;
+  }
+
+  .specimen-caption .label{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .specimen-caption a{
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+  }
+
+  .specimen-note{
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-top: 1px dashed var(--rule);
+    padding-top: 14px;
+  }
+
+  /* ---------- RIGHT: CONTENT ---------- */
+  article{ min-width: 0; }
+
+  .intro{
+    font-size: 17px;
+    max-width: 62ch;
+    margin-bottom: 44px;
+  }
+
+  .intro strong{
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+  }
+
+  /* ---------- CROSS SECTION DIAGRAM ---------- */
+  .diagram-block{
+    margin-bottom: 56px;
+  }
+
+  .diagram-block .eyebrow{ margin-bottom: 10px; display:block; }
+
+  .diagram-hint{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 8px 0 22px;
+  }
+
+  .cross-section{
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  .cross-section svg{
+    flex-shrink: 0;
+    width: 190px;
+    height: auto;
+    overflow: visible;
+  }
+
+  .band{
+    cursor: pointer;
+    transition: filter 0.15s ease, opacity 0.15s ease;
+    filter: saturate(0.55) brightness(1.02);
+  }
+  .band.active, .band:hover{
+    filter: saturate(1) brightness(1);
+  }
+  .cross-section.has-active .band:not(.active){
+    opacity: 0.4;
+  }
+
+  .leader-labels{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0 26px;
+    min-height: 340px;
+    flex: 1;
+  }
+
+  .leader-item{
+    cursor: pointer;
+    padding: 8px 10px;
+    border-left: 3px solid transparent;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .leader-item:hover, .leader-item.active{
+    background: var(--paper-2);
+  }
+
+  .leader-item .roman{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-right: 6px;
+  }
+
+  .leader-item .name{
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .leader-item .sub{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .leader-item[data-layer="mucosa"]{ border-left-color: var(--mucosa); }
+  .leader-item[data-layer="submucosa"]{ border-left-color: var(--submucosa); }
+  .leader-item[data-layer="muscularis"]{ border-left-color: var(--muscularis); }
+  .leader-item[data-layer="serosa"]{ border-left-color: var(--serosa); }
+
+  /* ---------- LAYER CARDS ---------- */
+  .layers{
+    border-top: 1px solid var(--rule);
+  }
+
+  .layer-card{
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .layer-card button.card-head{
+    all: unset;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    width: 100%;
+    padding: 22px 4px;
+    cursor: pointer;
+  }
+  .layer-card button.card-head:focus-visible{
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+
+  .layer-card .swatch{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    top: 2px;
+  }
+  .layer-card[data-layer="mucosa"] .swatch{ background: var(--mucosa); }
+  .layer-card[data-layer="submucosa"] .swatch{ background: var(--submucosa); }
+  .layer-card[data-layer="muscularis"] .swatch{ background: var(--muscularis); }
+  .layer-card[data-layer="serosa"] .swatch{ background: var(--serosa); }
+
+  .layer-card .head-text{ flex: 1; }
+
+  .layer-card .roman-big{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .layer-card h3{
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .layer-card .tagline{
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .layer-card .chevron{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    color: var(--ink-soft);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .layer-card.open .chevron{ transform: rotate(45deg); }
+
+  .card-body{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.28s ease;
+  }
+  .layer-card.open .card-body{
+    max-height: 420px;
+  }
+
+  .card-body-inner{
+    padding: 0 4px 28px 40px;
+    max-width: 58ch;
+  }
+
+  .card-body-inner p{ margin: 0 0 12px; font-size: 15.5px; }
+  .card-body-inner p:last-child{ margin-bottom: 0; }
+
+  .card-body-inner .fact{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    font-style: italic;
+    border-left: 2px solid var(--rule);
+    padding-left: 12px;
+    margin-top: 14px;
+  }
+
+  footer{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 30px 32px 60px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
+  }
+  footer a{ color: var(--ink); }
+
+  @media (max-width: 860px){
+    main{ grid-template-columns: 1fr; gap: 40px; }
+    aside{ position: static; }
+    .cross-section{ flex-direction: column; }
+    .cross-section svg{ width: 140px; margin: 0 auto; }
+    .leader-labels{ min-height: unset; gap: 4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="eyebrow plate-no">Plate IV — Dinding Lambung</span>
+  <h1>Empat lapis yang menyusun <em>dinding lambung</em>, dari isi hingga sekitarnya.</h1>
+  <p class="dek">Sebuah tabung otot sederhana yang, bila dipotong melintang, memperlihatkan susunan jaringan yang sama persis dengan cara sebuah benteng disusun: lapisan penjaga di dalam, lapisan penopang dan pertahanan di luarnya.</p>
+</header>
+
+<main>
+  <aside>
+    <div class="specimen-frame">
+      <div class="inner-rule">
+        <div class="viewer-wrap">
+          <iframe
+            title="Stomach Tissue Detail - BioDigital"
+            frameborder="0"
+            allowfullscreen
+            webkitallowfullscreen="true"
+            mozallowfullscreen="true"
+            allow="fullscreen; vr"
+            src="https://human.biodigital.com/view?id=production/maleAdult/stomach_tissue_detail&lang=en&ref=share">
+          </iframe>
+        </div>
+      </div>
+    </div>
+    <div class="specimen-caption">
+      <span class="label">Spesimen — Potongan Jaringan Lambung</span>
+      Model 3D interaktif dari <a href="https://human.biodigital.com/view?id=production/maleAdult/stomach_tissue_detail&lang=en&ref=share" target="_blank" rel="nofollow">BioDigital Human</a>. Seret untuk memutar, cubit atau gulir untuk memperbesar.
+    </div>
+    <p class="specimen-note">Diagram di sebelah kanan adalah skema penyerta yang disederhanakan — gunakan untuk mengenali tiap lapisan sebelum mencarinya pada model 3D di atas.</p>
+  </aside>
+
+  <article>
+    <p class="intro"><strong>Ambil satu titik mana pun</strong> di permukaan lambung, potong tegak lurus dari dalam ke luar, dan akan selalu ditemukan urutan yang sama: mukosa, submukosa, muskularis eksterna, lalu serosa. Urutan ini tidak berubah-ubah di seluruh saluran cerna — yang berubah hanyalah ketebalan dan detail di setiap organ. Berikut yang membedakan versi milik lambung.</p>
+
+    <div class="diagram-block">
+      <span class="eyebrow">Skema Potongan Melintang</span>
+      <p class="diagram-hint">Arahkan kursor atau ketuk salah satu lapisan — baik pada gambar maupun daftar di sampingnya.</p>
+
+      <div class="cross-section" id="crossSection">
+        <svg viewBox="0 0 190 380" xmlns="http://www.w3.org/2000/svg">
+          <!-- lumen wavy rugae line -->
+          <path d="M0,26 Q15,10 30,26 T60,26 T90,26 T120,26 T150,26 T190,26" fill="none" stroke="#8a8368" stroke-width="2"/>
+          <text x="95" y="14" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6B6355" letter-spacing="1">LUMEN</text>
+
+          <!-- Mucosa -->
+          <rect class="band" data-layer="mucosa" x="0" y="26" width="190" height="46" fill="#B5474F"/>
+
+          <!-- Submucosa -->
+          <rect class="band" data-layer="submucosa" x="0" y="72" width="190" height="34" fill="#C99A3C"/>
+
+          <!-- Muscularis externa: 3 sublayers -->
+          <rect class="band" data-layer="muscularis" x="0" y="106" width="190" height="42" fill="#5B7A62"/>
+          <rect class="band" data-layer="muscularis" x="0" y="148" width="190" height="56" fill="#4F6B58"/>
+          <rect class="band" data-layer="muscularis" x="0" y="204" width="190" height="46" fill="#446053"/>
+
+          <!-- Serosa -->
+          <rect class="band" data-layer="serosa" x="0" y="250" width="190" height="20" fill="#3F5A6B"/>
+
+          <!-- sublayer tick labels for muscularis -->
+          <text x="8" y="131" font-family="JetBrains Mono, monospace" font-size="8" fill="#EDE7D9">oblik</text>
+          <text x="8" y="180" font-family="JetBrains Mono, monospace" font-size="8" fill="#EDE7D9">sirkular</text>
+          <text x="8" y="230" font-family="JetBrains Mono, monospace" font-size="8" fill="#EDE7D9">longitudinal</text>
+        </svg>
+
+        <div class="leader-labels">
+          <div class="leader-item" data-layer="mucosa">
+            <span class="roman">I</span><span class="name">Mukosa</span>
+            <div class="sub">Lapisan yang bersentuhan langsung dengan isi lambung</div>
+          </div>
+          <div class="leader-item" data-layer="submucosa">
+            <span class="roman">II</span><span class="name">Submukosa</span>
+            <div class="sub">Jalur suplai — pembuluh darah dan saraf lokal</div>
+          </div>
+          <div class="leader-item" data-layer="muscularis">
+            <span class="roman">III</span><span class="name">Muskularis Eksterna</span>
+            <div class="sub">Mesin penggerak, tiga arah serat otot</div>
+          </div>
+          <div class="leader-item" data-layer="serosa">
+            <span class="roman">IV</span><span class="name">Serosa</span>
+            <div class="sub">Pembungkus luar, peredam gesekan antarorgan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layers" id="layerCards">
+
+      <div class="layer-card" data-layer="mucosa">
+        <button class="card-head" aria-expanded="false">
+          <span class="swatch"></span>
+          <span class="head-text">
+            <span class="roman-big">I — Lumen-facing</span>
+            <h3>Mukosa</h3>
+            <p class="tagline">Lapisan yang menyambut segala sesuatu yang ditelan, lebih dulu dari lapisan mana pun.</p>
+          </span>
+          <span class="chevron">+</span>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <p>Terdiri dari epitel kolumnar selapis yang melipat ke dalam membentuk lubang-lubang kecil (foveola gastrika), tempat bermuaranya kelenjar-kelenjar penghasil lendir, asam, dan enzim pencernaan. Di bawahnya ada lamina propria — jaringan ikat longgar tempat kelenjar itu tertanam — lalu lapisan otot tipis bernama muskularis mukosa yang membantu mukosa bergerak sendiri, terpisah dari gerak besar lambung secara keseluruhan.</p>
+            <p class="fact">Fakta kecil: permukaan mukosa lambung memperbaharui dirinya sepenuhnya setiap tiga hingga lima hari — salah satu jaringan dengan regenerasi tercepat di tubuh, karena harus terus menahan paparan asam.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-card" data-layer="submucosa">
+        <button class="card-head" aria-expanded="false">
+          <span class="swatch"></span>
+          <span class="head-text">
+            <span class="roman-big">II — Jalur suplai</span>
+            <h3>Submukosa</h3>
+            <p class="tagline">Jaringan ikat padat yang menopang dan menghidupi mukosa dari bawah.</p>
+          </span>
+          <span class="chevron">+</span>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <p>Berisi pembuluh darah dan limfatik yang lebih besar dibanding yang ada di mukosa, serta anyaman saraf submukosa (pleksus Meissner) yang mengatur sekresi kelenjar dan aliran darah lokal secara mandiri, tanpa selalu menunggu perintah dari otak.</p>
+            <p class="fact">Fakta kecil: pleksus saraf di lapisan ini adalah bagian dari sistem saraf enterik — kadang disebut "otak kedua" tubuh karena mampu mengatur banyak fungsi pencernaan tanpa campur tangan sistem saraf pusat.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-card" data-layer="muscularis">
+        <button class="card-head" aria-expanded="false">
+          <span class="swatch"></span>
+          <span class="head-text">
+            <span class="roman-big">III — Mesin penggerak</span>
+            <h3>Muskularis Eksterna</h3>
+            <p class="tagline">Tiga lapis otot polos yang meremas dan mengaduk isi lambung menjadi kim.</p>
+          </span>
+          <span class="chevron">+</span>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <p>Sebagian besar organ pencernaan hanya punya dua arah serat otot (sirkular dan longitudinal). Lambung istimewa: ia punya lapisan ketiga di bagian paling dalam, berserat oblik/miring, yang membantu meremas makanan lebih kuat daripada sekadar mendorongnya maju. Di antara lapisan sirkular dan longitudinal, ada pleksus mienterikus (Auerbach) yang mengatur ritme kontraksi ini.</p>
+            <p class="fact">Fakta kecil: lapisan oblik inilah yang membuat lambung mampu "meremas" seperti tangan, bukan cuma bergelombang seperti usus — penting untuk mencampur makanan padat dengan asam dan enzim secara merata.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-card" data-layer="serosa">
+        <button class="card-head" aria-expanded="false">
+          <span class="swatch"></span>
+          <span class="head-text">
+            <span class="roman-big">IV — Pembungkus luar</span>
+            <h3>Serosa</h3>
+            <p class="tagline">Selubung tipis dan licin yang menjaga lambung agar tak bergesekan dengan organ tetangganya.</p>
+          </span>
+          <span class="chevron">+</span>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <p>Lapisan tertipis dari keempatnya: jaringan ikat areolar yang dilapisi mesothelium — permukaan licin yang juga dikenal sebagai peritoneum viseral. Serosa ini menyambung dengan omentum yang menggantungkan dan melindungi lambung di dalam rongga perut.</p>
+            <p class="fact">Fakta kecil: karena lambung punya bagian yang tidak sepenuhnya ditutupi peritoneum (di titik tempat ia menempel pada omentum), lapisan serosa tidak selalu melingkupi seluruh permukaan organ secara merata.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </article>
+</main>
+
+<footer>
+  Model 3D: <a href="https://human.biodigital.com/view?id=production/maleAdult/stomach_tissue_detail&lang=en&ref=share" target="_blank" rel="nofollow">BioDigital Human</a> — digunakan untuk tujuan pendidikan. Skema potongan melintang di halaman ini disederhanakan untuk kejelasan dan bukan pengganti gambar histologi klinis.
+</footer>
+
+<script>
+  (function(){
+    var crossSection = document.getElementById('crossSection');
+    var bands = crossSection.querySelectorAll('.band');
+    var leaderItems = crossSection.querySelectorAll('.leader-item');
+    var cards = document.querySelectorAll('.layer-card');
+
+    function setActive(layer){
+      if(!layer){
+        crossSection.classList.remove('has-active');
+        bands.forEach(function(b){ b.classList.remove('active'); });
+        leaderItems.forEach(function(l){ l.classList.remove('active'); });
+        return;
+      }
+      crossSection.classList.add('has-active');
+      bands.forEach(function(b){
+        b.classList.toggle('active', b.dataset.layer === layer);
+      });
+      leaderItems.forEach(function(l){
+        l.classList.toggle('active', l.dataset.layer === layer);
+      });
+    }
+
+    bands.forEach(function(b){
+      b.addEventListener('mouseenter', function(){ setActive(b.dataset.layer); });
+      b.addEventListener('click', function(){ openCard(b.dataset.layer); });
+    });
+    leaderItems.forEach(function(l){
+      l.addEventListener('mouseenter', function(){ setActive(l.dataset.layer); });
+      l.addEventListener('click', function(){ openCard(l.dataset.layer); });
+    });
+    crossSection.addEventListener('mouseleave', function(){ setActive(null); });
+
+    function openCard(layer){
+      var card = document.querySelector('.layer-card[data-layer="' + layer + '"]');
+      if(!card) return;
+      var isOpen = card.classList.contains('open');
+      cards.forEach(function(c){
+        c.classList.remove('open');
+        c.querySelector('.card-head').setAttribute('aria-expanded', 'false');
+      });
+      if(!isOpen){
+        card.classList.add('open');
+        card.querySelector('.card-head').setAttribute('aria-expanded', 'true');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    cards.forEach(function(card){
+      card.querySelector('.card-head').addEventListener('click', function(){
+        openCard(card.dataset.layer);
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
