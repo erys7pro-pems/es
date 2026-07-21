@@ -181,21 +181,33 @@
 
   .item-row{
     display:flex;
-    gap:10px;
-    align-items:flex-start;
+    gap:12px;
+    align-items:center;
     padding:12px 0;
     border-bottom:1px dashed var(--line);
     position:relative;
   }
   .item-row:first-child{ padding-top:0; }
-  .item-tag{
-    width:6px;
-    align-self:stretch;
-    border-radius:4px;
-    background:var(--ink-soft);
+  .item-icon{
+    width:44px;
+    height:44px;
+    border-radius:12px;
+    background:var(--line);
     flex-shrink:0;
-    transition:background .15s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    transition:background-color .15s ease;
   }
+  .item-icon img{
+    width:78%;
+    height:78%;
+    object-fit:contain;
+    border-radius:8px;
+    display:none;
+  }
+  .item-icon img.show{ display:block; }
   .item-fields{ flex:1; display:flex; gap:10px; flex-wrap:wrap; }
   .item-fields .jenis-wrap{ flex:1 1 170px; }
   .item-fields .bobot-wrap{ width:110px; }
@@ -428,6 +440,17 @@
     kaca: 'var(--kaca)'
   };
 
+  const iconUrls = {
+    plastik: 'https://blogger.googleusercontent.com/img/a/AVvXsEhv5rkmUoBkbz3ZXHrIuFweThU1GlE8l7pzKYmF8MNaK-7yicf2Rh6u_mWob9yV9hoOTZc-sAgCZMm602LKL3maDlF7XRSex4U1UUpCwQlDrv-7MUgLU0G_yV6a9rNkFR0CU2iC4_RfDkwMMptiy3HaX3LHvgUu0Olp49X9kvH3TpjBzkoMmH-dR7Y_TRI=w65-h65',
+    kertas_arsip: 'https://blogger.googleusercontent.com/img/a/AVvXsEijW8zKBp7TpjxiOXzHHhcB_ASyfXvQtdVhg3eVKxWP-5L3QZWrQK7b4t13J7jo5pb8M5iuvrcAM3geXJ8CSbZw1-dTrzjmdVIfhxYdQCanPYtsbLnj-4xb9NfalSI2WfeyQ581q5cnjjrXJw6ypfImjIEY26mvdy6pXO_Iq_jGaBa8E31XKPNvHJ1X3WA=w64-h64',
+    marga: 'https://blogger.googleusercontent.com/img/a/AVvXsEjgUv-Pf_2vwU2ZdHEwmITDNGRo0GSVAWxHLJ11WUF_Oqca63eYj0wqGOHCkXJWyhXT9YG9yovse7OzlaNeeve4uIS16Z3wX9UaFkM3MLrBXaIQeTIOhVCU893qaVreMbJe7PyAsoZp99b1GhcGWbL8EKLyJImHW85EcuxGjiXZwVZm7VIORkTdNaRlHj8=w75-h75',
+    kardus: 'https://blogger.googleusercontent.com/img/a/AVvXsEhsR_ikhdFVJzOjbdIpvnZGA27z9tD4J8K_DqUqpIzJn_3DG5ApIHcJNGKKbTf-dE0rbfpLh0rgOPp7rP1zj29X3e_LJQQOez8ERpJCWdPg4FtxS3QfEVhDeX_en9RhREqGTfh0WvjwpekAXtEBrUlts9VSZxrsNUp-B-fa88SCL9L5F_3rm6UoCg7S9r8',
+    kaleng: 'https://blogger.googleusercontent.com/img/a/AVvXsEjM-CpkMZdZkJgr4W4OMofHpOisNTGRqCCw4yH2Atzzp57vdY91Mfi8u_kTTpbTdMuVGMSjyNVYkMJoVxGercpv0nlxZdETJ5jLKLBLgOr9wPkCtB6zkMeY8wGqvo-ykHGfQX3OR1x_dYzBmsaY6ZiuprycxfHv_XW_ziwnCyniIroxusNbm254bcQRovQ=w67-h67',
+    besi: 'https://blogger.googleusercontent.com/img/a/AVvXsEh2ARWmbEhOHd66F2svxjQNL2y76DCUesoUPCdcXTGDU6N1rLOTfd7p8XQS20XuZ3cVHthiC6sNfivIhxkaRNTYcNjBFRP6A4-hcq3vVhPpHXd86vGTQeBO_xp5K7Ogm6fV-Ks__MxogJicxGjBesBw9M8M1pR4VNv8t3MgbA6UCH4qH0lepj7_LjkjpTQ=w56-h56',
+    tembaga: 'https://blogger.googleusercontent.com/img/a/AVvXsEhldw3FV6zgfI5Uc-8X475VeW1h8pympd0wUFkqAhD6xx4ebmGCo-clVf57FPGpjbB3MvIN6FBDbQyMclwHnd1VKr7G0wELkBuasiOCsLZ4bf-AQgb9831Ds4X-bG8Ty4s0gevJRE54BG7IKmiqUXyKh6q04PilPYC1Z-FTNZyBb6DrvIhv-bLqklDxRO8=w67-h66',
+    kaca: 'https://blogger.googleusercontent.com/img/a/AVvXsEh4TVC6ue5Sc13p5o1NBqbIag9QD9xzNnW_64mM8XoAADFwFytM7N4_u0QhgxYhxawti7JXM9LnsplmOu2HBV_HEuRFkurJ4l_uyk9NlpWBt6EGNvnhFCdd0z6nmn5QmD2dEEsoJpht08MuSquXbxjch4zqF6xd4A5TeECzNeTG7DYOJbZA9WoODkmVXFg=w59-h59'
+  };
+
   function buatBaris(){
     rowIndex++;
     const row = document.createElement('div');
@@ -435,7 +458,7 @@
     row.dataset.rowId = rowIndex;
 
     row.innerHTML = `
-      <div class="item-tag"></div>
+      <div class="item-icon"><img alt=""></div>
       <div class="item-fields">
         <div class="jenis-wrap">
           <select name="jenis_sampah" required>
@@ -461,12 +484,21 @@
     `;
 
     const select = row.querySelector('select');
-    const tag = row.querySelector('.item-tag');
+    const iconBox = row.querySelector('.item-icon');
+    const iconImg = row.querySelector('.item-icon img');
     const bobotInput = row.querySelector('input[name="bobot_sampah"]');
     const removeBtn = row.querySelector('.btn-remove');
 
     select.addEventListener('change', () => {
-      tag.style.background = tagColors[select.value] || 'var(--ink-soft)';
+      const warna = tagColors[select.value] || 'var(--line)';
+      iconBox.style.background = warna;
+      if (iconUrls[select.value]) {
+        iconImg.src = iconUrls[select.value];
+        iconImg.alt = select.options[select.selectedIndex].text;
+        iconImg.classList.add('show');
+      } else {
+        iconImg.classList.remove('show');
+      }
     });
 
     bobotInput.addEventListener('input', hitungTotal);
