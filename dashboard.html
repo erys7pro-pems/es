@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Bank Sampah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE8DC;
+    --card:#F7F4EC;
+    --ink:#2B2A25;
+    --ink-soft:#63604F;
+    --line:rgba(43,42,37,0.18);
+    --accent:#B54E1F;
+    --plastik:#3F6D5C;
+    --kertas-arsip:#8B6F47;
+    --marga:#6B7280;
+    --kardus:#A67C52;
+    --kaleng:#7C8DA6;
+    --besi:#55606B;
+    --tembaga:#A65E2E;
+    --kaca:#7A6BA6;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    background-image:repeating-linear-gradient(0deg, rgba(43,42,37,0.02) 0px, rgba(43,42,37,0.02) 1px, transparent 1px, transparent 3px);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:48px 16px 80px;
+  }
+  .wrap{ width:100%; max-width:820px; }
+
+  .slip-top{
+    background:var(--ink);
+    color:var(--paper);
+    padding:14px 28px;
+    border-radius:14px 14px 0 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+  }
+  .slip-top span:last-child{ color:#C9A876; }
+
+  .card{
+    background:var(--card);
+    border-radius:0 0 14px 14px;
+    padding:32px 28px 34px;
+    box-shadow:0 18px 40px -20px rgba(43,42,37,0.35);
+  }
+  .perforation{
+    height:14px;
+    background:radial-gradient(circle at 12px 0, var(--paper) 7px, transparent 7.5px) repeat-x;
+    background-size:24px 14px;
+    background-position:6px 0;
+  }
+
+  .header-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:26px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  h1{ font-family:'Space Mono',monospace; font-size:22px; margin:4px 0 4px; }
+  .sub{ font-size:13px; color:var(--ink-soft); margin:0; }
+
+  .btn-refresh{
+    background:none;
+    border:1.5px solid var(--ink-soft);
+    color:var(--ink-soft);
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.04em;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .btn-refresh:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn-refresh:disabled{ opacity:.5; cursor:not-allowed; }
+
+  /* Stat cards */
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
+    margin-bottom:32px;
+  }
+  .stat-box{
+    background:var(--ink);
+    color:var(--paper);
+    border-radius:10px;
+    padding:14px 14px 12px;
+  }
+  .stat-box .s-label{
+    font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#C9A876;
+    margin-bottom:6px; display:block;
+  }
+  .stat-box .s-value{
+    font-family:'Space Mono',monospace; font-weight:700;
+    font-size:20px; line-height:1.15; word-break:break-word;
+  }
+
+  /* Section titles */
+  .section-title{
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .section{ margin-bottom:32px; }
+
+  /* Per jenis breakdown */
+  .jenis-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .jenis-row:last-child{ border-bottom:none; }
+  .jenis-tag{ width:6px; height:34px; border-radius:4px; flex-shrink:0; }
+  .jenis-info{ flex:1; min-width:0; }
+  .jenis-name{ font-size:13.5px; font-weight:600; margin-bottom:5px; text-transform:capitalize; }
+  .jenis-bar-track{ background:var(--line); height:6px; border-radius:4px; overflow:hidden; }
+  .jenis-bar-fill{ height:100%; border-radius:4px; }
+  .jenis-stats{
+    text-align:right;
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    flex-shrink:0;
+  }
+  .jenis-stats .nilai{ color:var(--ink); font-weight:700; display:block; margin-top:2px; }
+
+  /* Transaksi terbaru */
+  .trx-row{
+    padding:14px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .trx-row:last-child{ border-bottom:none; }
+  .trx-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:4px;
+  }
+  .trx-nama{ font-size:14.5px; font-weight:600; }
+  .trx-nilai{ font-family:'Space Mono',monospace; font-size:14.5px; font-weight:700; color:var(--accent); white-space:nowrap; }
+  .trx-meta{ font-size:12px; color:var(--ink-soft); }
+  .trx-meta span + span::before{ content:'·'; margin:0 6px; }
+
+  .empty-state{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--ink-soft);
+    font-size:13.5px;
+  }
+  .loading-state{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--ink-soft);
+    font-family:'Space Mono',monospace;
+    font-size:12.5px;
+    letter-spacing:0.04em;
+  }
+
+  @media (max-width:600px){
+    .stats-grid{ grid-template-columns:repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="slip-top">
+    <span>Bank Sampah</span>
+    <span>Dashboard</span>
+  </div>
+  <div class="perforation"></div>
+  <div class="card">
+
+    <div class="header-row">
+      <div>
+        <h1>Dashboard Data Setoran</h1>
+        <p class="sub">Ringkasan data dari spreadsheet Bank Sampah.</p>
+      </div>
+      <button class="btn-refresh" id="btnRefresh">↻ Muat Ulang</button>
+    </div>
+
+    <div id="loadingState" class="loading-state">Memuat data...</div>
+
+    <div id="dashboardContent" style="display:none;">
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="s-label">Total Transaksi</span>
+          <span class="s-value" id="statTransaksi">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="s-label">Total Bobot</span>
+          <span class="s-value" id="statBobot">0 kg</span>
+        </div>
+        <div class="stat-box">
+          <span class="s-label">Total Nilai</span>
+          <span class="s-value" id="statNilai">Rp 0</span>
+        </div>
+        <div class="stat-box">
+          <span class="s-label">Jumlah Nasabah</span>
+          <span class="s-value" id="statNasabah">0</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Rincian per Jenis Sampah</p>
+        <div id="jenisList"></div>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Transaksi Terbaru</p>
+        <div id="trxList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz1tXFzsfqW366ztLVVefnMwLk2pSJ1FsOXW39eSn8tBS9fwf4W-F3hGhhkRpHIsqMLOQ/exec';
+
+  const tagColors = {
+    plastik: 'var(--plastik)',
+    kertas_arsip: 'var(--kertas-arsip)',
+    marga: 'var(--marga)',
+    kardus: 'var(--kardus)',
+    kaleng: 'var(--kaleng)',
+    besi: 'var(--besi)',
+    tembaga: 'var(--tembaga)',
+    kaca: 'var(--kaca)'
+  };
+
+  const namaJenis = {
+    plastik: 'Plastik', kertas_arsip: 'Kertas Arsip', marga: 'Marga', kardus: 'Kardus',
+    kaleng: 'Kaleng', besi: 'Besi', tembaga: 'Tembaga', kaca: 'Kaca'
+  };
+
+  const loadingState = document.getElementById('loadingState');
+  const dashboardContent = document.getElementById('dashboardContent');
+  const btnRefresh = document.getElementById('btnRefresh');
+
+  function formatRupiah(n){
+    return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+  }
+  function formatBobot(n){
+    return n.toFixed(1) + ' kg';
+  }
+
+  window.isiDashboard = function(data){
+    btnRefresh.disabled = false;
+    loadingState.style.display = 'none';
+
+    if (data.error) {
+      loadingState.style.display = 'block';
+      loadingState.textContent = 'Gagal memuat data: ' + data.error;
+      return;
+    }
+
+    dashboardContent.style.display = 'block';
+
+    document.getElementById('statTransaksi').textContent = data.totalTransaksi;
+    document.getElementById('statBobot').textContent = formatBobot(data.totalBobot);
+    document.getElementById('statNilai').textContent = formatRupiah(data.totalNilai);
+    document.getElementById('statNasabah').textContent = data.totalNasabah;
+
+    // Rincian per jenis
+    const jenisList = document.getElementById('jenisList');
+    jenisList.innerHTML = '';
+    if (data.perJenis.length === 0) {
+      jenisList.innerHTML = '<div class="empty-state">Belum ada data sampah.</div>';
+    } else {
+      const maxNilai = Math.max.apply(null, data.perJenis.map(j => j.nilai));
+      data.perJenis.forEach(function(j){
+        const persen = maxNilai > 0 ? (j.nilai / maxNilai * 100) : 0;
+        const warna = tagColors[j.jenis] || 'var(--ink-soft)';
+        const label = namaJenis[j.jenis] || j.jenis;
+
+        const row = document.createElement('div');
+        row.className = 'jenis-row';
+        row.innerHTML = `
+          <div class="jenis-tag" style="background:${warna}"></div>
+          <div class="jenis-info">
+            <div class="jenis-name">${label}</div>
+            <div class="jenis-bar-track"><div class="jenis-bar-fill" style="width:${persen}%; background:${warna}"></div></div>
+          </div>
+          <div class="jenis-stats">
+            ${formatBobot(j.bobot)}
+            <span class="nilai">${formatRupiah(j.nilai)}</span>
+          </div>
+        `;
+        jenisList.appendChild(row);
+      });
+    }
+
+    // Transaksi terbaru
+    const trxList = document.getElementById('trxList');
+    trxList.innerHTML = '';
+    if (data.transaksiTerbaru.length === 0) {
+      trxList.innerHTML = '<div class="empty-state">Belum ada transaksi tercatat.</div>';
+    } else {
+      data.transaksiTerbaru.forEach(function(t){
+        const row = document.createElement('div');
+        row.className = 'trx-row';
+        row.innerHTML = `
+          <div class="trx-top">
+            <span class="trx-nama">${t.namaNasabah}</span>
+            <span class="trx-nilai">${formatRupiah(t.totalNilai)}</span>
+          </div>
+          <div class="trx-meta">
+            <span>${t.timestamp}</span>
+            <span>${t.jumlahItem} jenis · ${formatBobot(t.totalBobot)}</span>
+            <span>Teller: ${t.teller1} & ${t.teller2}</span>
+          </div>
+        `;
+        trxList.appendChild(row);
+      });
+    }
+  };
+
+  function muatDashboard(){
+    btnRefresh.disabled = true;
+    loadingState.style.display = 'block';
+    loadingState.textContent = 'Memuat data...';
+    dashboardContent.style.display = 'none';
+
+    const scriptTag = document.createElement('script');
+    scriptTag.src = WEBAPP_URL + '?action=dashboard&callback=isiDashboard&t=' + Date.now();
+    document.body.appendChild(scriptTag);
+    scriptTag.onload = function(){ scriptTag.remove(); };
+  }
+
+  btnRefresh.addEventListener('click', muatDashboard);
+
+  muatDashboard();
+</script>
+
+</body>
+</html>
