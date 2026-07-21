@@ -37,6 +37,65 @@
   }
   .wrap{ width:100%; max-width:820px; }
 
+  .app-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    padding:0 6px 22px;
+  }
+  .app-brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:0;
+  }
+  .app-logo{
+    width:50px;
+    height:50px;
+    object-fit:contain;
+    flex-shrink:0;
+    border-radius:12px;
+    background:#fff;
+    padding:4px;
+    filter:drop-shadow(0 2px 4px rgba(43,42,37,0.15));
+  }
+  .app-title-group{ min-width:0; }
+  .app-title{
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    color:var(--ink);
+    text-transform:uppercase;
+    line-height:1.35;
+  }
+  .app-version{
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.04em;
+    margin-top:3px;
+  }
+  .btn-formulir{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:9px 16px;
+    border-radius:8px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.05em;
+    text-decoration:none;
+    white-space:nowrap;
+    flex-shrink:0;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .btn-formulir:hover{ background:var(--accent); transform:translateY(-1px); }
+  .btn-formulir svg{ width:13px; height:13px; }
+
   .slip-top{
     background:var(--ink);
     color:var(--paper);
@@ -231,12 +290,30 @@
 
   @media (max-width:600px){
     .stats-grid{ grid-template-columns:repeat(2, 1fr); }
+    .app-header{ justify-content:center; text-align:center; }
+    .app-brand{ flex-direction:column; text-align:center; }
+    .btn-formulir{ width:100%; justify-content:center; }
   }
 </style>
 </head>
 <body>
 
 <div class="wrap">
+
+  <div class="app-header">
+    <div class="app-brand">
+      <img class="app-logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcbUi75F5_xUcZ9OY2C1g59-ZbdDhjQFAcu5FUf0iI5A4RFMyeWpUed54cJEqkAxybQiiWlOjQ2-4xqUFmNo_jX4LlWoRE7yYdUSWP6eQQe2Pdqv0fh1jZ1Lo0o8Sp0bJBWsEuWWq1BLLiDvdcSssEEtZ8-PrF7IlYZ_qXELL7706mj-nPTXtUyDUzfr0/s500/LOGO%20BSIC%20(2)%20(1).png" alt="Logo Bank Sampah Insan Cendekia">
+      <div class="app-title-group">
+        <div class="app-title">Aplikasi Bank Sampah<br>Insan Cendekia</div>
+        <div class="app-version">Versi 1.6</div>
+      </div>
+    </div>
+    <a href="formulir_setoran.html" class="btn-formulir">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      Formulir
+    </a>
+  </div>
+
   <div class="slip-top">
     <span>Bank Sampah</span>
     <span>Dashboard</span>
