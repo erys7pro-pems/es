@@ -127,6 +127,52 @@
   }
   .section{ margin-bottom:32px; }
 
+  .section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .section-header .section-title{ margin:0; padding:0; border:none; }
+  .search-box{
+    position:relative;
+    flex-shrink:0;
+  }
+  .search-box input{
+    width:200px;
+    padding:7px 12px 7px 30px;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .search-box input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(181,78,31,0.12);
+  }
+  .search-box::before{
+    content:'⌕';
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--ink-soft);
+    font-size:14px;
+    pointer-events:none;
+  }
+  .search-info{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin:-6px 0 12px;
+  }
+
   /* Per jenis breakdown */
   .jenis-row{
     display:flex;
@@ -235,7 +281,13 @@
       </div>
 
       <div class="section">
-        <p class="section-title">Transaksi Terbaru</p>
+        <div class="section-header">
+          <p class="section-title">Transaksi Terbaru</p>
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cari nama nasabah...">
+          </div>
+        </div>
+        <p class="search-info" id="searchInfo"></p>
         <div id="trxList"></div>
       </div>
 
@@ -265,6 +317,11 @@
   const loadingState = document.getElementById('loadingState');
   const dashboardContent = document.getElementById('dashboardContent');
   const btnRefresh = document.getElementById('btnRefresh');
+  const searchInput = document.getElementById('searchInput');
+  const searchInfo = document.getElementById('searchInfo');
+
+  let transaksiTerbaruDefault = [];
+  let searchTimer = null;
 
   function formatRupiah(n){
     return 'Rp ' + Math.round(n).toLocaleString('id-ID');
@@ -319,30 +376,37 @@
       });
     }
 
-    // Transaksi terbaru
+    // Transaksi terbaru (default)
+    transaksiTerbaruDefault = data.transaksiTerbaru;
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchInfo').textContent = '';
+    renderTrxList(transaksiTerbaruDefault, 'Belum ada transaksi tercatat.');
+  };
+
+  function renderTrxList(list, teksKosong){
     const trxList = document.getElementById('trxList');
     trxList.innerHTML = '';
-    if (data.transaksiTerbaru.length === 0) {
-      trxList.innerHTML = '<div class="empty-state">Belum ada transaksi tercatat.</div>';
-    } else {
-      data.transaksiTerbaru.forEach(function(t){
-        const row = document.createElement('div');
-        row.className = 'trx-row';
-        row.innerHTML = `
-          <div class="trx-top">
-            <span class="trx-nama">${t.namaNasabah}</span>
-            <span class="trx-nilai">${formatRupiah(t.totalNilai)}</span>
-          </div>
-          <div class="trx-meta">
-            <span>${t.timestamp}</span>
-            <span>${t.jumlahItem} jenis · ${formatBobot(t.totalBobot)}</span>
-            <span>Teller: ${t.teller1} & ${t.teller2}</span>
-          </div>
-        `;
-        trxList.appendChild(row);
-      });
+    if (list.length === 0) {
+      trxList.innerHTML = '<div class="empty-state">' + teksKosong + '</div>';
+      return;
     }
-  };
+    list.forEach(function(t){
+      const row = document.createElement('div');
+      row.className = 'trx-row';
+      row.innerHTML = `
+        <div class="trx-top">
+          <span class="trx-nama">${t.namaNasabah}</span>
+          <span class="trx-nilai">${formatRupiah(t.totalNilai)}</span>
+        </div>
+        <div class="trx-meta">
+          <span>${t.timestamp}</span>
+          <span>${t.jumlahItem} jenis · ${formatBobot(t.totalBobot)}</span>
+          <span>Teller: ${t.teller1} & ${t.teller2}</span>
+        </div>
+      `;
+      trxList.appendChild(row);
+    });
+  }
 
   function muatDashboard(){
     btnRefresh.disabled = true;
@@ -357,6 +421,40 @@
   }
 
   btnRefresh.addEventListener('click', muatDashboard);
+
+  // ==== Bagian pencarian transaksi ====
+  window.tampilkanHasilPencarian = function(data){
+    if (data.error) {
+      searchInfo.textContent = 'Gagal mencari: ' + data.error;
+      return;
+    }
+    searchInfo.textContent = data.jumlahHasil + ' hasil ditemukan untuk "' + data.query + '"';
+    renderTrxList(data.hasil, 'Tidak ada transaksi nasabah dengan nama tersebut.');
+  };
+
+  function cariTransaksi(query){
+    searchInfo.textContent = 'Mencari...';
+    const scriptTag = document.createElement('script');
+    scriptTag.src = WEBAPP_URL + '?action=search&q=' + encodeURIComponent(query) + '&callback=tampilkanHasilPencarian&t=' + Date.now();
+    document.body.appendChild(scriptTag);
+    scriptTag.onload = function(){ scriptTag.remove(); };
+  }
+
+  searchInput.addEventListener('input', function(){
+    clearTimeout(searchTimer);
+    const query = searchInput.value.trim();
+
+    if (query === '') {
+      searchInfo.textContent = '';
+      renderTrxList(transaksiTerbaruDefault, 'Belum ada transaksi tercatat.');
+      return;
+    }
+
+    // Debounce: tunggu 400ms setelah user berhenti mengetik, baru kirim pencarian
+    searchTimer = setTimeout(function(){
+      cariTransaksi(query);
+    }, 400);
+  });
 
   muatDashboard();
 </script>
