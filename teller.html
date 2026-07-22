@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaSIC - Kelola Petugas Teller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE8DC;
+    --card:#F7F4EC;
+    --ink:#2B2A25;
+    --ink-soft:#63604F;
+    --line:rgba(43,42,37,0.18);
+    --accent:#B54E1F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    background-image:repeating-linear-gradient(0deg, rgba(43,42,37,0.02) 0px, rgba(43,42,37,0.02) 1px, transparent 1px, transparent 3px);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:48px 16px 80px;
+  }
+  .page-wrap{ width:100%; max-width:560px; }
+
+  .app-header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; flex-wrap:wrap; padding:0 6px 22px;
+  }
+  .app-brand{ display:flex; align-items:center; gap:14px; min-width:0; }
+  .app-logo{
+    width:50px; height:50px; object-fit:contain; flex-shrink:0;
+    border-radius:12px; background:#fff; padding:4px;
+    filter:drop-shadow(0 2px 4px rgba(43,42,37,0.15));
+  }
+  .app-title-group{ min-width:0; }
+  .app-name{
+    font-family:'Space Mono',monospace; font-size:18px; font-weight:700;
+    letter-spacing:0.03em; color:var(--accent); line-height:1.2;
+  }
+  .app-title{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:500;
+    letter-spacing:0.01em; color:var(--ink); line-height:1.35; margin-top:2px;
+  }
+  .app-version{ font-size:11px; color:var(--ink-soft); letter-spacing:0.04em; margin-top:3px; }
+
+  .btn-back{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:9px 16px; border-radius:8px;
+    background:var(--ink); color:var(--paper);
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.05em;
+    text-decoration:none; white-space:nowrap; flex-shrink:0;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .btn-back:hover{ background:var(--accent); transform:translateY(-1px); }
+  .btn-back svg{ width:13px; height:13px; }
+
+  .slip-top{
+    background:var(--ink); color:var(--paper);
+    padding:14px 28px; border-radius:14px 14px 0 0;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:0.14em; text-transform:uppercase;
+  }
+  .slip-top span:last-child{ color:#C9A876; }
+  .card{
+    background:var(--card); border-radius:0 0 14px 14px;
+    padding:32px 28px 28px;
+    box-shadow:0 18px 40px -20px rgba(43,42,37,0.35);
+  }
+  .perforation{
+    height:14px;
+    background:radial-gradient(circle at 12px 0, var(--paper) 7px, transparent 7.5px) repeat-x;
+    background-size:24px 14px; background-position:6px 0;
+  }
+  h1{ font-family:'Space Mono',monospace; font-size:22px; margin:4px 0 2px; }
+  .sub{ font-size:13px; color:var(--ink-soft); margin:0 0 26px; }
+
+  label{
+    display:block; font-size:12px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:6px;
+  }
+  .add-row{ display:flex; gap:10px; align-items:flex-end; margin-bottom:8px; }
+  .add-row .field{ flex:1; margin-bottom:0; }
+  input[type=text]{
+    width:100%; padding:10px 12px; font-family:'Inter',sans-serif; font-size:14.5px;
+    color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:8px;
+    outline:none; transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,78,31,0.12); }
+
+  .btn-add-teller{
+    padding:10px 18px; background:var(--accent); color:#fff; border:none;
+    border-radius:8px; font-family:'Space Mono',monospace; font-size:12.5px;
+    letter-spacing:0.04em; text-transform:uppercase; cursor:pointer;
+    white-space:nowrap; transition:filter .15s ease;
+  }
+  .btn-add-teller:hover{ filter:brightness(1.08); }
+  .btn-add-teller:disabled{ opacity:0.6; cursor:not-allowed; }
+
+  .status-msg{
+    margin:10px 0 22px; padding:10px 14px; border-radius:8px; font-size:13.5px; display:none;
+  }
+  .status-msg.show{ display:block; }
+  .status-msg.success{ background:rgba(63,109,92,0.15); color:#3F6D5C; }
+  .status-msg.error{ background:rgba(181,78,31,0.12); color:var(--accent); }
+
+  .section-title{
+    font-family:'Space Mono',monospace; font-size:12px; text-transform:uppercase;
+    letter-spacing:0.1em; color:var(--ink-soft); margin:0 0 14px;
+    padding-bottom:8px; border-bottom:1px solid var(--line);
+  }
+
+  .teller-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:11px 4px; border-bottom:1px dashed var(--line);
+  }
+  .teller-row:last-child{ border-bottom:none; }
+  .teller-name{ font-size:14px; font-weight:500; }
+
+  .btn-delete{
+    display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:8px;
+    background:none; border:1px solid var(--line); color:var(--ink-soft);
+    cursor:pointer; transition:all .15s ease; flex-shrink:0;
+  }
+  .btn-delete:hover{ background:rgba(181,78,31,0.08); border-color:var(--accent); color:var(--accent); }
+  .btn-delete svg{ width:15px; height:15px; }
+
+  .empty-state, .loading-state{
+    text-align:center; padding:30px 20px; color:var(--ink-soft); font-size:13.5px;
+  }
+  .loading-state{
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.04em;
+  }
+
+  @media (max-width:480px){
+    .app-header{ justify-content:center; text-align:center; }
+    .app-brand{ flex-direction:column; text-align:center; }
+    .btn-back{ width:100%; justify-content:center; }
+    .add-row{ flex-direction:column; align-items:stretch; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="app-header">
+    <div class="app-brand">
+      <img class="app-logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcbUi75F5_xUcZ9OY2C1g59-ZbdDhjQFAcu5FUf0iI5A4RFMyeWpUed54cJEqkAxybQiiWlOjQ2-4xqUFmNo_jX4LlWoRE7yYdUSWP6eQQe2Pdqv0fh1jZ1Lo0o8Sp0bJBWsEuWWq1BLLiDvdcSssEEtZ8-PrF7IlYZ_qXELL7706mj-nPTXtUyDUzfr0/s500/LOGO%20BSIC%20(2)%20(1).png" alt="Logo Bank Sampah Insan Cendekia">
+      <div class="app-title-group">
+        <div class="app-name">BaSIC</div>
+        <div class="app-title">Aplikasi Bank Sampah Insan Cendekia</div>
+        <div class="app-version">Versi 1.7</div>
+      </div>
+    </div>
+    <a href="dashboard.html" class="btn-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Kembali ke Home
+    </a>
+  </div>
+
+  <div class="slip-top">
+    <span>Bank Sampah</span>
+    <span>Kelola Teller</span>
+  </div>
+  <div class="perforation"></div>
+  <div class="card">
+    <h1>Kelola Petugas Teller</h1>
+    <p class="sub">Tambah atau hapus petugas timbang & pencatat setoran.</p>
+
+    <div class="add-row">
+      <div class="field">
+        <label for="nama_teller_input">Nama Petugas Baru</label>
+        <input type="text" id="nama_teller_input" placeholder="cth. Budi Santoso">
+      </div>
+      <button class="btn-add-teller" id="btnAddTeller">+ Tambah</button>
+    </div>
+    <div class="status-msg" id="statusMsg"></div>
+
+    <p class="section-title">Daftar Petugas Teller</p>
+    <div id="loadingState" class="loading-state">Memuat data...</div>
+    <div id="tellerList" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz1tXFzsfqW366ztLVVefnMwLk2pSJ1FsOXW39eSn8tBS9fwf4W-F3hGhhkRpHIsqMLOQ/exec';
+
+  const namaInput = document.getElementById('nama_teller_input');
+  const btnAddTeller = document.getElementById('btnAddTeller');
+  const statusMsg = document.getElementById('statusMsg');
+  const loadingState = document.getElementById('loadingState');
+  const tellerList = document.getElementById('tellerList');
+
+  function tampilkanStatus(tipe, teks){
+    statusMsg.textContent = teks;
+    statusMsg.className = 'status-msg show ' + tipe;
+  }
+
+  function panggilJSONP(url, namaCallback, handler){
+    window[namaCallback] = handler;
+    const scriptTag = document.createElement('script');
+    scriptTag.src = url;
+    scriptTag.onerror = function(){
+      handler({ status: 'error', message: 'Tidak bisa terhubung ke server.' });
+    };
+    document.body.appendChild(scriptTag);
+    scriptTag.onload = function(){ scriptTag.remove(); };
+  }
+
+  function renderTellerList(daftar){
+    loadingState.style.display = 'none';
+    tellerList.style.display = 'block';
+    tellerList.innerHTML = '';
+
+    if (!daftar.length) {
+      tellerList.innerHTML = '<div class="empty-state">Belum ada petugas teller. Tambahkan lewat form di atas.</div>';
+      return;
+    }
+
+    daftar.forEach(function(nama){
+      const row = document.createElement('div');
+      row.className = 'teller-row';
+      row.innerHTML = `
+        <span class="teller-name">${nama}</span>
+        <button class="btn-delete" title="Hapus ${nama}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      `;
+      row.querySelector('.btn-delete').addEventListener('click', function(){
+        hapusTeller(nama);
+      });
+      tellerList.appendChild(row);
+    });
+  }
+
+  function muatDaftarTeller(){
+    loadingState.style.display = 'block';
+    loadingState.textContent = 'Memuat data...';
+    tellerList.style.display = 'none';
+
+    const url = WEBAPP_URL + '?action=master&callback=hasilMuatTeller&t=' + Date.now();
+    panggilJSONP(url, 'hasilMuatTeller', function(data){
+      if (data.error) {
+        loadingState.textContent = 'Gagal memuat data: ' + data.error;
+        loadingState.style.display = 'block';
+        return;
+      }
+      renderTellerList(data.teller || []);
+    });
+  }
+
+  function tambahTeller(){
+    const nama = namaInput.value.trim();
+    if (!nama) {
+      tampilkanStatus('error', 'Nama petugas wajib diisi.');
+      return;
+    }
+
+    btnAddTeller.disabled = true;
+    btnAddTeller.textContent = 'Menyimpan...';
+
+    const url = WEBAPP_URL + '?action=tambah_teller&nama=' + encodeURIComponent(nama) + '&callback=hasilTambahTeller&t=' + Date.now();
+    panggilJSONP(url, 'hasilTambahTeller', function(data){
+      btnAddTeller.disabled = false;
+      btnAddTeller.textContent = '+ Tambah';
+
+      if (data.status === 'success') {
+        tampilkanStatus('success', data.message);
+        namaInput.value = '';
+        muatDaftarTeller();
+      } else {
+        tampilkanStatus('error', data.message || 'Gagal menambahkan petugas.');
+      }
+    });
+  }
+
+  function hapusTeller(nama){
+    const yakin = confirm('Hapus petugas "' + nama + '" dari daftar teller?');
+    if (!yakin) return;
+
+    tampilkanStatus('success', 'Menghapus "' + nama + '"...');
+
+    const url = WEBAPP_URL + '?action=hapus_teller&nama=' + encodeURIComponent(nama) + '&callback=hasilHapusTeller&t=' + Date.now();
+    panggilJSONP(url, 'hasilHapusTeller', function(data){
+      if (data.status === 'success') {
+        tampilkanStatus('success', data.message);
+        muatDaftarTeller();
+      } else {
+        tampilkanStatus('error', data.message || 'Gagal menghapus petugas.');
+      }
+    });
+  }
+
+  btnAddTeller.addEventListener('click', tambahTeller);
+  namaInput.addEventListener('keypress', function(e){
+    if (e.key === 'Enter') { e.preventDefault(); tambahTeller(); }
+  });
+
+  muatDaftarTeller();
+</script>
+
+</body>
+</html>

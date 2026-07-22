@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaSIC - Tambah Nasabah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE8DC;
+    --card:#F7F4EC;
+    --ink:#2B2A25;
+    --ink-soft:#63604F;
+    --line:rgba(43,42,37,0.18);
+    --accent:#B54E1F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    background-image:repeating-linear-gradient(0deg, rgba(43,42,37,0.02) 0px, rgba(43,42,37,0.02) 1px, transparent 1px, transparent 3px);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:48px 16px 80px;
+  }
+  .page-wrap{ width:100%; max-width:560px; }
+
+  .app-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    padding:0 6px 22px;
+  }
+  .app-brand{ display:flex; align-items:center; gap:14px; min-width:0; }
+  .app-logo{
+    width:50px; height:50px; object-fit:contain; flex-shrink:0;
+    border-radius:12px; background:#fff; padding:4px;
+    filter:drop-shadow(0 2px 4px rgba(43,42,37,0.15));
+  }
+  .app-title-group{ min-width:0; }
+  .app-name{
+    font-family:'Space Mono',monospace; font-size:18px; font-weight:700;
+    letter-spacing:0.03em; color:var(--accent); line-height:1.2;
+  }
+  .app-title{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:500;
+    letter-spacing:0.01em; color:var(--ink); line-height:1.35; margin-top:2px;
+  }
+  .app-version{ font-size:11px; color:var(--ink-soft); letter-spacing:0.04em; margin-top:3px; }
+
+  .btn-back{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:9px 16px; border-radius:8px;
+    background:var(--ink); color:var(--paper);
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.05em;
+    text-decoration:none; white-space:nowrap; flex-shrink:0;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .btn-back:hover{ background:var(--accent); transform:translateY(-1px); }
+  .btn-back svg{ width:13px; height:13px; }
+
+  .slip-top{
+    background:var(--ink); color:var(--paper);
+    padding:14px 28px; border-radius:14px 14px 0 0;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:0.14em; text-transform:uppercase;
+  }
+  .slip-top span:last-child{ color:#C9A876; }
+  .card{
+    background:var(--card); border-radius:0 0 14px 14px;
+    padding:32px 28px 28px;
+    box-shadow:0 18px 40px -20px rgba(43,42,37,0.35);
+  }
+  .perforation{
+    height:14px;
+    background:radial-gradient(circle at 12px 0, var(--paper) 7px, transparent 7.5px) repeat-x;
+    background-size:24px 14px; background-position:6px 0;
+  }
+  h1{ font-family:'Space Mono',monospace; font-size:22px; margin:4px 0 2px; }
+  .sub{ font-size:13px; color:var(--ink-soft); margin:0 0 26px; }
+
+  label{
+    display:block; font-size:12px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:6px;
+  }
+  .field{ margin-bottom:20px; }
+  input[type=text], select{
+    width:100%; padding:10px 12px; font-family:'Inter',sans-serif; font-size:14.5px;
+    color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:8px;
+    outline:none; transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus, select:focus{
+    border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,78,31,0.12);
+  }
+  .row-two{ display:flex; gap:16px; }
+  .row-two > .field{ flex:1; }
+
+  .toggle-group{
+    display:flex; gap:8px; margin-bottom:24px;
+  }
+  .toggle-btn{
+    flex:1; padding:10px; text-align:center; border-radius:8px;
+    border:1.5px solid var(--line); background:#fff; cursor:pointer;
+    font-family:'Space Mono',monospace; font-size:12.5px; letter-spacing:0.03em;
+    color:var(--ink-soft); transition:all .15s ease;
+  }
+  .toggle-btn.active{ border-color:var(--accent); color:var(--accent); background:rgba(181,78,31,0.06); }
+
+  .submit-btn{
+    width:100%; margin-top:6px; padding:14px; background:var(--accent); color:#fff;
+    border:none; border-radius:8px; font-family:'Space Mono',monospace; font-size:14px;
+    letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;
+    transition:filter .15s ease;
+  }
+  .submit-btn:hover{ filter:brightness(1.08); }
+  .submit-btn:disabled{ opacity:0.6; cursor:not-allowed; }
+
+  .status-msg{
+    margin-top:14px; padding:10px 14px; border-radius:8px; font-size:13.5px; display:none;
+  }
+  .status-msg.show{ display:block; }
+  .status-msg.success{ background:rgba(63,109,92,0.15); color:#3F6D5C; }
+  .status-msg.error{ background:rgba(181,78,31,0.12); color:var(--accent); }
+
+  @media (max-width:480px){
+    .row-two{ flex-direction:column; }
+    .app-header{ justify-content:center; text-align:center; }
+    .app-brand{ flex-direction:column; text-align:center; }
+    .btn-back{ width:100%; justify-content:center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="app-header">
+    <div class="app-brand">
+      <img class="app-logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcbUi75F5_xUcZ9OY2C1g59-ZbdDhjQFAcu5FUf0iI5A4RFMyeWpUed54cJEqkAxybQiiWlOjQ2-4xqUFmNo_jX4LlWoRE7yYdUSWP6eQQe2Pdqv0fh1jZ1Lo0o8Sp0bJBWsEuWWq1BLLiDvdcSssEEtZ8-PrF7IlYZ_qXELL7706mj-nPTXtUyDUzfr0/s500/LOGO%20BSIC%20(2)%20(1).png" alt="Logo Bank Sampah Insan Cendekia">
+      <div class="app-title-group">
+        <div class="app-name">BaSIC</div>
+        <div class="app-title">Aplikasi Bank Sampah Insan Cendekia</div>
+        <div class="app-version">Versi 1.7</div>
+      </div>
+    </div>
+    <a href="dashboard.html" class="btn-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Kembali ke Home
+    </a>
+  </div>
+
+  <div class="slip-top">
+    <span>Bank Sampah</span>
+    <span>Tambah Nasabah</span>
+  </div>
+  <div class="perforation"></div>
+  <div class="card">
+    <h1>Tambah Nasabah Baru</h1>
+    <p class="sub">Daftarkan siswa atau GTK baru ke master data.</p>
+
+    <div class="toggle-group">
+      <div class="toggle-btn active" id="toggleSiswa" data-jenis="siswa">Siswa</div>
+      <div class="toggle-btn" id="toggleGtk" data-jenis="gtk">GTK</div>
+    </div>
+
+    <form id="formNasabah">
+
+      <div class="field">
+        <label for="nama_input">Nama Lengkap</label>
+        <input type="text" id="nama_input" placeholder="cth. Ahmad Fadli" required>
+      </div>
+
+      <div id="siswaFields">
+        <div class="row-two">
+          <div class="field">
+            <label for="tingkat_input">Tingkat</label>
+            <select id="tingkat_input">
+              <option value="X">X</option>
+              <option value="XI">XI</option>
+              <option value="XII">XII</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="kelas_input">Kelas</label>
+            <input type="text" id="kelas_input" placeholder="cth. A" maxlength="2">
+          </div>
+        </div>
+      </div>
+
+      <div id="gtkFields" style="display:none;">
+        <div class="field">
+          <label for="jenis_gtk_input">Jenis</label>
+          <select id="jenis_gtk_input">
+            <option value="Guru">Guru</option>
+            <option value="Tenaga Pendidik">Tenaga Pendidik</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="jabatan_input">Jabatan <span style="font-weight:400;text-transform:none;">(opsional)</span></label>
+          <input type="text" id="jabatan_input" placeholder="cth. Wali Kelas X A / Tata Usaha">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="btnSubmit">Tambah Nasabah</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz1tXFzsfqW366ztLVVefnMwLk2pSJ1FsOXW39eSn8tBS9fwf4W-F3hGhhkRpHIsqMLOQ/exec';
+
+  const toggleSiswa = document.getElementById('toggleSiswa');
+  const toggleGtk = document.getElementById('toggleGtk');
+  const siswaFields = document.getElementById('siswaFields');
+  const gtkFields = document.getElementById('gtkFields');
+  const form = document.getElementById('formNasabah');
+  const btnSubmit = document.getElementById('btnSubmit');
+  const statusMsg = document.getElementById('statusMsg');
+
+  let jenisAktif = 'siswa';
+
+  function pilihJenis(jenis){
+    jenisAktif = jenis;
+    toggleSiswa.classList.toggle('active', jenis === 'siswa');
+    toggleGtk.classList.toggle('active', jenis === 'gtk');
+    siswaFields.style.display = jenis === 'siswa' ? '' : 'none';
+    gtkFields.style.display = jenis === 'gtk' ? '' : 'none';
+  }
+
+  toggleSiswa.addEventListener('click', () => pilihJenis('siswa'));
+  toggleGtk.addEventListener('click', () => pilihJenis('gtk'));
+
+  function tampilkanStatus(tipe, teks){
+    statusMsg.textContent = teks;
+    statusMsg.className = 'status-msg show ' + tipe;
+  }
+
+  window.hasilTambahNasabah = function(data){
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = 'Tambah Nasabah';
+
+    if (data.status === 'success') {
+      tampilkanStatus('success', data.message);
+      form.reset();
+      pilihJenis('siswa');
+    } else {
+      tampilkanStatus('error', data.message || 'Terjadi kesalahan, coba lagi.');
+    }
+  };
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const nama = document.getElementById('nama_input').value.trim();
+    if (!nama) {
+      tampilkanStatus('error', 'Nama wajib diisi.');
+      return;
+    }
+
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'Menyimpan...';
+    statusMsg.className = 'status-msg';
+
+    let url;
+    if (jenisAktif === 'siswa') {
+      const tingkat = document.getElementById('tingkat_input').value;
+      const kelas = document.getElementById('kelas_input').value.trim();
+      if (!kelas) {
+        tampilkanStatus('error', 'Kelas wajib diisi untuk siswa.');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Tambah Nasabah';
+        return;
+      }
+      url = WEBAPP_URL + '?action=tambah_siswa'
+        + '&nama=' + encodeURIComponent(nama)
+        + '&tingkat=' + encodeURIComponent(tingkat)
+        + '&kelas=' + encodeURIComponent(kelas)
+        + '&callback=hasilTambahNasabah&t=' + Date.now();
+    } else {
+      const jenisGtk = document.getElementById('jenis_gtk_input').value;
+      const jabatan = document.getElementById('jabatan_input').value.trim();
+      url = WEBAPP_URL + '?action=tambah_gtk'
+        + '&nama=' + encodeURIComponent(nama)
+        + '&jenis=' + encodeURIComponent(jenisGtk)
+        + '&jabatan=' + encodeURIComponent(jabatan)
+        + '&callback=hasilTambahNasabah&t=' + Date.now();
+    }
+
+    const scriptTag = document.createElement('script');
+    scriptTag.src = url;
+    scriptTag.onerror = function(){
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Tambah Nasabah';
+      tampilkanStatus('error', 'Tidak bisa terhubung ke server.');
+    };
+    document.body.appendChild(scriptTag);
+    scriptTag.onload = function(){ scriptTag.remove(); };
+  });
+</script>
+
+</body>
+</html>
