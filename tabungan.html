@@ -196,9 +196,6 @@
         <input type="text" id="searchInput" placeholder="Cari nama nasabah...">
         <select id="statusFilter">
           <option value="">Semua Status</option>
-          <option value="Siswa">Siswa</option>
-          <option value="Guru">Guru</option>
-          <option value="Tenaga Pendidik">Tenaga Pendidik</option>
         </select>
         <select id="kelasFilter">
           <option value="">Semua Kelas</option>
@@ -279,6 +276,21 @@
     document.getElementById('statTotal').textContent = totalNasabah;
     document.getElementById('statAktif').textContent = sudahMenabung;
     document.getElementById('statNilai').textContent = formatRupiah(totalNilaiKeseluruhan);
+
+    // Isi opsi filter Status dari data yang ada (dinamis, supaya istilah apa pun yang dipakai di sheet tetap cocok)
+    const statusSet = [...new Set(semuaData.map(d => d.status).filter(Boolean))]
+      .sort((a, b) => {
+        // "Siswa" selalu diletakkan paling atas, sisanya diurutkan alfabet
+        if (a === 'Siswa') return -1;
+        if (b === 'Siswa') return 1;
+        return a.localeCompare(b);
+      });
+    statusFilter.innerHTML = '<option value="">Semua Status</option>';
+    statusSet.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      statusFilter.appendChild(opt);
+    });
 
     // Isi opsi filter Kelas dari data yang ada (dirapikan dulu biar tidak dobel akibat spasi berlebih)
     const kelasSet = [...new Set(semuaData.map(d => normalisasi(d.kelas)).filter(Boolean))]
