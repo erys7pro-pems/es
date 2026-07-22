@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaSIC - Data Nasabah & Tabungan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE8DC;
+    --card:#F7F4EC;
+    --ink:#2B2A25;
+    --ink-soft:#63604F;
+    --line:rgba(43,42,37,0.18);
+    --accent:#B54E1F;
+    --siswa:#3F6D5C;
+    --guru:#A65E2E;
+    --tendik:#6B7280;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--paper);
+    background-image:repeating-linear-gradient(0deg, rgba(43,42,37,0.02) 0px, rgba(43,42,37,0.02) 1px, transparent 1px, transparent 3px);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:48px 16px 80px;
+  }
+  .page-wrap{ width:100%; max-width:760px; }
+
+  .app-header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; flex-wrap:wrap; padding:0 6px 22px;
+  }
+  .app-brand{ display:flex; align-items:center; gap:14px; min-width:0; }
+  .app-logo{
+    width:50px; height:50px; object-fit:contain; flex-shrink:0;
+    border-radius:12px; background:#fff; padding:4px;
+    filter:drop-shadow(0 2px 4px rgba(43,42,37,0.15));
+  }
+  .app-title-group{ min-width:0; }
+  .app-name{
+    font-family:'Space Mono',monospace; font-size:18px; font-weight:700;
+    letter-spacing:0.03em; color:var(--accent); line-height:1.2;
+  }
+  .app-title{
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:500;
+    letter-spacing:0.01em; color:var(--ink); line-height:1.35; margin-top:2px;
+  }
+  .app-version{ font-size:11px; color:var(--ink-soft); letter-spacing:0.04em; margin-top:3px; }
+
+  .btn-back{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:9px 16px; border-radius:8px;
+    background:var(--ink); color:var(--paper);
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.05em;
+    text-decoration:none; white-space:nowrap; flex-shrink:0;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .btn-back:hover{ background:var(--accent); transform:translateY(-1px); }
+  .btn-back svg{ width:13px; height:13px; }
+
+  .slip-top{
+    background:var(--ink); color:var(--paper);
+    padding:14px 28px; border-radius:14px 14px 0 0;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:0.14em; text-transform:uppercase;
+  }
+  .slip-top span:last-child{ color:#C9A876; }
+  .card{
+    background:var(--card); border-radius:0 0 14px 14px;
+    padding:32px 28px 34px;
+    box-shadow:0 18px 40px -20px rgba(43,42,37,0.35);
+  }
+  .perforation{
+    height:14px;
+    background:radial-gradient(circle at 12px 0, var(--paper) 7px, transparent 7.5px) repeat-x;
+    background-size:24px 14px; background-position:6px 0;
+  }
+  h1{ font-family:'Space Mono',monospace; font-size:22px; margin:4px 0 2px; }
+  .sub{ font-size:13px; color:var(--ink-soft); margin:0 0 24px; }
+
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:26px;
+  }
+  .stat-box{ background:var(--ink); color:var(--paper); border-radius:10px; padding:14px 14px 12px; }
+  .stat-box .s-label{
+    font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#C9A876;
+    margin-bottom:6px; display:block;
+  }
+  .stat-box .s-value{
+    font-family:'Space Mono',monospace; font-weight:700; font-size:19px; line-height:1.15; word-break:break-word;
+  }
+
+  .filter-bar{
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;
+  }
+  .filter-bar input, .filter-bar select{
+    padding:8px 12px; font-family:'Inter',sans-serif; font-size:13px;
+    border:1px solid var(--line); border-radius:8px; background:#fff; outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .filter-bar input:focus, .filter-bar select:focus{
+    border-color:var(--accent); box-shadow:0 0 0 3px rgba(181,78,31,0.12);
+  }
+  .filter-bar input{ flex:1 1 180px; }
+  .filter-bar select{ flex:0 0 auto; }
+
+  .result-info{ font-size:11.5px; color:var(--ink-soft); margin-bottom:12px; }
+
+  .tabel-wrap{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  thead th{
+    text-align:left; font-family:'Space Mono',monospace; font-size:10.5px;
+    text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft);
+    padding:0 10px 10px; border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  tbody td{
+    padding:11px 10px; border-bottom:1px dashed var(--line); vertical-align:middle;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  .col-nama{ font-weight:600; }
+  .col-num{ font-family:'Space Mono',monospace; text-align:right; white-space:nowrap; }
+
+  .badge{
+    display:inline-block; padding:3px 9px; border-radius:20px;
+    font-size:11px; font-weight:600; color:#fff; white-space:nowrap;
+  }
+
+  .empty-state, .loading-state{
+    text-align:center; padding:36px 20px; color:var(--ink-soft); font-size:13.5px;
+  }
+  .loading-state{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.04em; }
+
+  @media (max-width:560px){
+    .stats-grid{ grid-template-columns:1fr; }
+    .app-header{ justify-content:center; text-align:center; }
+    .app-brand{ flex-direction:column; text-align:center; }
+    .btn-back{ width:100%; justify-content:center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <div class="app-header">
+    <div class="app-brand">
+      <img class="app-logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcbUi75F5_xUcZ9OY2C1g59-ZbdDhjQFAcu5FUf0iI5A4RFMyeWpUed54cJEqkAxybQiiWlOjQ2-4xqUFmNo_jX4LlWoRE7yYdUSWP6eQQe2Pdqv0fh1jZ1Lo0o8Sp0bJBWsEuWWq1BLLiDvdcSssEEtZ8-PrF7IlYZ_qXELL7706mj-nPTXtUyDUzfr0/s500/LOGO%20BSIC%20(2)%20(1).png" alt="Logo Bank Sampah Insan Cendekia">
+      <div class="app-title-group">
+        <div class="app-name">BaSIC</div>
+        <div class="app-title">Aplikasi Bank Sampah Insan Cendekia</div>
+        <div class="app-version">Versi 1.8</div>
+      </div>
+    </div>
+    <a href="dashboard.html" class="btn-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Kembali ke Home
+    </a>
+  </div>
+
+  <div class="slip-top">
+    <span>Bank Sampah</span>
+    <span>Data & Tabungan</span>
+  </div>
+  <div class="perforation"></div>
+  <div class="card">
+    <h1>Data Nasabah & Tabungan</h1>
+    <p class="sub">Rekap gabungan Master Data dan riwayat setoran tiap nasabah.</p>
+
+    <div id="loadingState" class="loading-state">Memuat data...</div>
+
+    <div id="content" style="display:none;">
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="s-label">Nasabah Terdaftar</span>
+          <span class="s-value" id="statTotal">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="s-label">Sudah Menabung</span>
+          <span class="s-value" id="statAktif">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="s-label">Total Nilai Tabungan</span>
+          <span class="s-value" id="statNilai">Rp 0</span>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="searchInput" placeholder="Cari nama nasabah...">
+        <select id="statusFilter">
+          <option value="">Semua Status</option>
+          <option value="Siswa">Siswa</option>
+          <option value="Guru">Guru</option>
+          <option value="Tenaga Pendidik">Tenaga Pendidik</option>
+        </select>
+        <select id="kelasFilter">
+          <option value="">Semua Kelas</option>
+        </select>
+        <select id="sortBy">
+          <option value="nama">Urutkan: Nama (A-Z)</option>
+          <option value="nilai">Urutkan: Nilai Tertinggi</option>
+          <option value="bobot">Urutkan: Bobot Tertinggi</option>
+        </select>
+      </div>
+
+      <p class="result-info" id="resultInfo"></p>
+
+      <div class="tabel-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Status</th>
+              <th>Kelas</th>
+              <th style="text-align:right;">Bobot</th>
+              <th style="text-align:right;">Nilai Tabungan</th>
+            </tr>
+          </thead>
+          <tbody id="tabelBody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty-state" style="display:none;">Tidak ada data yang cocok dengan filter.</div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz1tXFzsfqW366ztLVVefnMwLk2pSJ1FsOXW39eSn8tBS9fwf4W-F3hGhhkRpHIsqMLOQ/exec';
+
+  const badgeColors = { 'Siswa': 'var(--siswa)', 'Guru': 'var(--guru)', 'Tenaga Pendidik': 'var(--tendik)' };
+
+  const loadingState = document.getElementById('loadingState');
+  const content = document.getElementById('content');
+  const searchInput = document.getElementById('searchInput');
+  const statusFilter = document.getElementById('statusFilter');
+  const kelasFilter = document.getElementById('kelasFilter');
+  const sortBy = document.getElementById('sortBy');
+  const tabelBody = document.getElementById('tabelBody');
+  const emptyState = document.getElementById('emptyState');
+  const resultInfo = document.getElementById('resultInfo');
+
+  let semuaData = [];
+
+  function formatRupiah(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+  function formatBobot(n){ return n.toFixed(1) + ' kg'; }
+
+  window.isiDataTabungan = function(res){
+    loadingState.style.display = 'none';
+
+    if (res.error) {
+      loadingState.style.display = 'block';
+      loadingState.textContent = 'Gagal memuat data: ' + res.error;
+      return;
+    }
+
+    content.style.display = 'block';
+    semuaData = res.data;
+
+    // Statistik ringkas
+    const totalNasabah = semuaData.length;
+    const sudahMenabung = semuaData.filter(d => d.totalBobot > 0).length;
+    const totalNilaiKeseluruhan = semuaData.reduce((sum, d) => sum + d.totalNilai, 0);
+
+    document.getElementById('statTotal').textContent = totalNasabah;
+    document.getElementById('statAktif').textContent = sudahMenabung;
+    document.getElementById('statNilai').textContent = formatRupiah(totalNilaiKeseluruhan);
+
+    // Isi opsi filter Kelas dari data yang ada
+    const kelasSet = [...new Set(semuaData.map(d => d.kelas).filter(Boolean))].sort();
+    kelasFilter.innerHTML = '<option value="">Semua Kelas</option>';
+    kelasSet.forEach(k => {
+      const opt = document.createElement('option');
+      opt.value = k; opt.textContent = k;
+      kelasFilter.appendChild(opt);
+    });
+
+    renderTabel();
+  };
+
+  function renderTabel(){
+    const kataKunci = searchInput.value.trim().toLowerCase();
+    const status = statusFilter.value;
+    const kelas = kelasFilter.value;
+    const urutan = sortBy.value;
+
+    let hasil = semuaData.filter(d => {
+      if (kataKunci && !d.nama.toLowerCase().includes(kataKunci)) return false;
+      if (status && d.status !== status) return false;
+      if (kelas && d.kelas !== kelas) return false;
+      return true;
+    });
+
+    if (urutan === 'nilai') hasil.sort((a, b) => b.totalNilai - a.totalNilai);
+    else if (urutan === 'bobot') hasil.sort((a, b) => b.totalBobot - a.totalBobot);
+    else hasil.sort((a, b) => a.nama.localeCompare(b.nama));
+
+    resultInfo.textContent = 'Menampilkan ' + hasil.length + ' dari ' + semuaData.length + ' nasabah terdaftar.';
+
+    tabelBody.innerHTML = '';
+    if (hasil.length === 0) {
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    hasil.forEach(d => {
+      const warna = badgeColors[d.status] || 'var(--ink-soft)';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="col-nama">${d.nama}</td>
+        <td><span class="badge" style="background:${warna}">${d.status}</span></td>
+        <td>${d.kelas || '—'}</td>
+        <td class="col-num">${formatBobot(d.totalBobot)}</td>
+        <td class="col-num">${formatRupiah(d.totalNilai)}</td>
+      `;
+      tabelBody.appendChild(tr);
+    });
+  }
+
+  [searchInput, statusFilter, kelasFilter, sortBy].forEach(el => {
+    el.addEventListener('input', renderTabel);
+    el.addEventListener('change', renderTabel);
+  });
+
+  function muatData(){
+    const scriptTag = document.createElement('script');
+    scriptTag.src = WEBAPP_URL + '?action=tabungan&callback=isiDataTabungan&t=' + Date.now();
+    document.body.appendChild(scriptTag);
+    scriptTag.onload = function(){ scriptTag.remove(); };
+  }
+
+  muatData();
+</script>
+
+</body>
+</html>
