@@ -252,6 +252,13 @@
   function formatRupiah(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
   function formatBobot(n){ return n.toFixed(1) + ' kg'; }
 
+  // Menyamakan teks sebelum dibandingkan: buang spasi berlebih & abaikan besar/kecil huruf.
+  // Ini mencegah kegagalan filter akibat data yang diketik manual di spreadsheet
+  // (misal "Guru " dengan spasi, atau "guru" huruf kecil semua).
+  function normalisasi(teks){
+    return String(teks || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
   window.isiDataTabungan = function(res){
     loadingState.style.display = 'none';
 
@@ -273,8 +280,10 @@
     document.getElementById('statAktif').textContent = sudahMenabung;
     document.getElementById('statNilai').textContent = formatRupiah(totalNilaiKeseluruhan);
 
-    // Isi opsi filter Kelas dari data yang ada
-    const kelasSet = [...new Set(semuaData.map(d => d.kelas).filter(Boolean))].sort();
+    // Isi opsi filter Kelas dari data yang ada (dirapikan dulu biar tidak dobel akibat spasi berlebih)
+    const kelasSet = [...new Set(semuaData.map(d => normalisasi(d.kelas)).filter(Boolean))]
+      .sort()
+      .map(k => k.toUpperCase());
     kelasFilter.innerHTML = '<option value="">Semua Kelas</option>';
     kelasSet.forEach(k => {
       const opt = document.createElement('option');
@@ -293,8 +302,8 @@
 
     let hasil = semuaData.filter(d => {
       if (kataKunci && !d.nama.toLowerCase().includes(kataKunci)) return false;
-      if (status && d.status !== status) return false;
-      if (kelas && d.kelas !== kelas) return false;
+      if (status && normalisasi(d.status) !== normalisasi(status)) return false;
+      if (kelas && normalisasi(d.kelas) !== normalisasi(kelas)) return false;
       return true;
     });
 
