@@ -196,7 +196,7 @@
   /* Stat cards */
   .stats-grid{
     display:grid;
-    grid-template-columns:repeat(4, 1fr);
+    grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
     gap:10px;
     margin-bottom:32px;
   }
@@ -428,8 +428,12 @@
           <span class="s-value" id="statBobot">0 kg</span>
         </div>
         <div class="stat-box">
-          <span class="s-label">Total Nilai</span>
+          <span class="s-label">Nilai Tabungan Nasabah</span>
           <span class="s-value" id="statNilai">Rp 0</span>
+        </div>
+        <div class="stat-box">
+          <span class="s-label">Dana Bank Sampah</span>
+          <span class="s-value" id="statBankSampah">Rp 0</span>
         </div>
         <div class="stat-box">
           <span class="s-label">Jumlah Nasabah</span>
@@ -520,6 +524,7 @@
     document.getElementById('statTransaksi').textContent = data.totalTransaksi;
     document.getElementById('statBobot').textContent = formatBobot(data.totalBobot);
     document.getElementById('statNilai').textContent = formatRupiah(data.totalNilai);
+    document.getElementById('statBankSampah').textContent = formatRupiah(data.totalBankSampah);
     document.getElementById('statNasabah').textContent = data.totalNasabah;
 
     // Rincian per jenis
