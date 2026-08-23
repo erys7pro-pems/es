@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Tautan — Hexagon Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a1a17;
+    --bg-panel: #0f2420;
+    --hex-fill: #123833;
+    --hex-fill-hover: #17453e;
+    --accent-bio: #6ee7b7;
+    --accent-info: #f4b860;
+    --text-main: #eaf4f0;
+    --text-muted: #7fa89c;
+    --line-faint: rgba(110, 231, 183, 0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(110,231,183,0.06), transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(244,184,96,0.05), transparent 45%);
+    padding-bottom: 80px;
+  }
+
+  /* faint circuit/vein backdrop */
+  .backdrop-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.5;
+    background-image:
+      linear-gradient(var(--line-faint) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-faint) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(circle at 50% 30%, black, transparent 75%);
+  }
+
+  header {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 72px 24px 48px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-bio);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .eyebrow::before, .eyebrow::after {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--accent-bio);
+    opacity: 0.6;
+  }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 5.5vw, 52px);
+    line-height: 1.08;
+    margin: 20px 0 16px;
+    letter-spacing: -0.01em;
+  }
+
+  h1 span {
+    color: var(--accent-bio);
+  }
+
+  header p {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* HONEYCOMB */
+  .honeycomb-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 24px 0;
+  }
+
+  .honeycomb {
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .hex {
+    position: absolute;
+    width: 168px;
+    height: 194px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: var(--hex-fill);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: transform 0.28s cubic-bezier(.2,.8,.2,1), background 0.28s ease, filter 0.28s ease;
+    cursor: pointer;
+    opacity: 0;
+    animation: rise 0.6s ease forwards;
+    filter: drop-shadow(0 0 0 1px rgba(110, 231, 183, 0.4));
+  }
+
+  .hex.empty {
+    background: transparent;
+    cursor: default;
+    pointer-events: none;
+    animation: none;
+    opacity: 1;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .hex:hover:not(.empty) {
+    background: var(--hex-fill-hover);
+    transform: translateY(-6px) scale(1.035);
+    filter: drop-shadow(0 0 0 1px var(--accent-bio)) drop-shadow(0 0 14px rgba(110, 231, 183, 0.55));
+  }
+
+  .hex:hover:not(.empty) .hex-icon {
+    color: var(--accent-bio);
+  }
+
+  .hex-inner {
+    padding: 0 22px;
+  }
+
+  .hex-icon {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 10px;
+    transition: color 0.28s ease;
+  }
+
+  .hex-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .hex-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--accent-info);
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+
+  @media (max-width: 640px) {
+    .honeycomb { transform: scale(0.72); transform-origin: top center; margin-top: -10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop-grid"></div>
+
+<header>
+  <span class="eyebrow">Portal Tautan</span>
+  <h1>Satu sarang,<br><span>banyak jalan.</span></h1>
+  <p>Setiap sel adalah tautan menuju perangkat ajar dan dashboard yang sering digunakan. Klik salah satu sel untuk membukanya.</p>
+</header>
+
+<div class="honeycomb-wrap">
+  <div class="honeycomb" id="honeycomb"></div>
+</div>
+
+<script>
+  // Data tautan — silakan ubah/isi sesuai kebutuhan.
+  // "sub" bersifat opsional (mis. kategori singkat).
+  const links = [
+    { label: "Dashboard", href: "https://erys7pro-pems.github.io/Perangkat-Ajar-Digital/dashboard.html", icon: "01" },
+    { label: "Jurnale", href: "https://pro.jurnale.id/guru/dashboard", icon: "02" },
+    { label: "Jurnal Mengajar", href: "https://erys7pro-pems.github.io/Perangkat-Ajar-Digital/Jurnal-Mengajar-Terintegrasi.html", icon: "03" },
+    { label: "TKA", href: "https://erys7pro-pems.github.io/Perangkat-Ajar-Digital/tka-quiz.html", icon: "04" },
+  ];
+
+  const HEX_W = 168;
+  const HEX_H = 194;
+  const ROW_SIZE = 2; // jumlah kolom per baris
+
+  const container = document.getElementById('honeycomb');
+
+  // Hitung posisi (left, top) tiap heksagon secara matematis:
+  // - kolom bergeser HEX_W per sel dalam satu baris
+  // - baris ganjil digeser HEX_W/2 ke kanan (pola sarang lebah)
+  // - baris bergeser 3/4 tinggi heksagon secara vertikal, supaya sisi miring saling bertemu
+  const dx = HEX_W / 2;
+  const dy = HEX_H * 0.75;
+
+  const cells = links.map((item, index) => {
+    const row = Math.floor(index / ROW_SIZE);
+    const col = index % ROW_SIZE;
+    const offsetX = (row % 2 === 1) ? dx : 0;
+    return {
+      item,
+      row,
+      left: col * HEX_W + offsetX,
+      top: row * dy,
+    };
+  });
+
+  const minLeft = Math.min(...cells.map(c => c.left));
+  const maxRight = Math.max(...cells.map(c => c.left + HEX_W));
+  const maxBottom = Math.max(...cells.map(c => c.top + HEX_H));
+
+  container.style.width = (maxRight - minLeft) + 'px';
+  container.style.height = maxBottom + 'px';
+
+  cells.forEach((cell, i) => {
+    const a = document.createElement('a');
+    a.className = 'hex';
+    a.href = cell.item.href;
+    a.style.left = (cell.left - minLeft) + 'px';
+    a.style.top = cell.top + 'px';
+    a.style.animationDelay = (cell.row * 0.08 + (i % ROW_SIZE) * 0.06) + 's';
+    a.innerHTML = `
+      <div class="hex-inner">
+        <span class="hex-icon">${cell.item.icon}</span>
+        <div class="hex-label">${cell.item.label}</div>
+        ${cell.item.sub ? `<div class="hex-sub">${cell.item.sub}</div>` : ''}
+      </div>
+    `;
+    container.appendChild(a);
+  });
+</script>
+
+</body>
+</html>
