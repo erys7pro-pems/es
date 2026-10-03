@@ -218,7 +218,7 @@
   .item-icon img.show{ display:block; }
   .item-fields{ flex:1; display:flex; gap:10px; flex-wrap:wrap; }
   .item-fields .jenis-wrap{ flex:1 1 170px; }
-  .item-fields .bobot-wrap{ width:110px; }
+  .item-fields .bobot-wrap{ width:140px; }
   .bobot-wrap .unit-input{ display:flex; align-items:center; gap:6px; }
   .bobot-wrap .unit-input span{ font-family:'Space Mono',monospace; font-size:12px; color:var(--ink-soft); }
 
@@ -305,7 +305,7 @@
 
   @media (max-width:480px){
     .row-two{ flex-direction:column; }
-    .item-fields .bobot-wrap{ width:90px; }
+    .item-fields .bobot-wrap{ width:115px; }
     .app-header{ justify-content:center; text-align:center; }
     .app-brand{ flex-direction:column; text-align:center; }
     .btn-dashboard{ width:100%; justify-content:center; }
@@ -417,7 +417,7 @@
 
     <div class="total-box">
       <span class="t-label">Total Bobot</span>
-      <span class="t-value"><span id="totalBobot">0.0</span> kg</span>
+      <span class="t-value"><span id="totalBobot">0</span> kg</span>
     </div>
 
     <div class="field" style="margin-top:20px;">
@@ -484,7 +484,7 @@
         </div>
         <div class="bobot-wrap">
           <div class="unit-input">
-            <input type="number" name="bobot_sampah" step="0.1" min="0" placeholder="0.0" required>
+            <input type="number" name="bobot_sampah" step="0.0001" min="0" inputmode="decimal" placeholder="0.0000" required>
             <span>kg</span>
           </div>
         </div>
@@ -537,7 +537,9 @@
     const rows = container.querySelectorAll('input[name="bobot_sampah"]');
     let total = 0;
     rows.forEach(r => { total += parseFloat(r.value) || 0; });
-    totalBobotEl.textContent = total.toFixed(1);
+    // Bulatkan ke 4 desimal agar tidak muncul sisa floating point (mis. 0,30000000000000004)
+    total = Math.round(total * 10000) / 10000;
+    totalBobotEl.textContent = total.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 4 });
   }
 
   btnAdd.addEventListener('click', buatBaris);
