@@ -505,8 +505,12 @@
   function formatRupiah(n){
     return 'Rp ' + Math.round(n).toLocaleString('id-ID');
   }
+  // Bobot tampil hingga 4 angka di belakang koma (angka nol di akhir dihilangkan)
   function formatBobot(n){
-    return n.toFixed(1) + ' kg';
+    return Number(n || 0).toLocaleString('id-ID', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 4
+    }) + ' kg';
   }
 
   window.isiDashboard = function(data){
