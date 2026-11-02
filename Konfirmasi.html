@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --moss: #1f4d3a;
+    --moss-dark: #153528;
+    --leaf: #dcebdd;
+    --paper: #f5f7f3;
+    --ink: #14231b;
+    --muted: #5c6b62;
+    --line: #cdd8cf;
+    --danger: #b3261e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font: 400 16px/1.6 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  header { background: var(--moss); color: #fff; padding: 40px 20px 56px; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  header h1 { margin: 0 0 8px; font-size: 1.9rem; line-height: 1.2; font-weight: 800; }
+  header p { margin: 0; color: #cfe3d3; max-width: 52ch; }
+  main { max-width: 640px; margin: -28px auto 48px; padding: 0 16px; }
+  form, .done {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 24px;
+  }
+  fieldset { border: 0; padding: 0; margin: 0 0 28px; }
+  legend, label.q { display: block; font-weight: 600; margin-bottom: 4px; padding: 0; }
+  .hint { color: var(--muted); font-size: .875rem; margin: 0 0 10px; }
+  h2 {
+    font-size: 1.1rem; margin: 36px 0 16px; padding-top: 20px;
+    border-top: 2px solid var(--leaf); font-weight: 800; color: var(--moss);
+  }
+  h2:first-of-type { margin-top: 8px; border-top: 0; padding-top: 0; }
+  input[type=text], select, textarea {
+    width: 100%; font: inherit; color: inherit; padding: 11px 12px;
+    border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input[readonly] { background: var(--paper); color: var(--muted); }
+  :focus-visible { outline: 3px solid #7fb98d; outline-offset: 2px; }
+  .opt {
+    display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; margin-bottom: 8px;
+    border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
+  }
+  .opt:has(input:checked) { border-color: var(--moss); background: var(--leaf); }
+  .opt input { margin-top: 5px; accent-color: var(--moss); }
+  .sub { margin-top: 12px; }
+  .hidden { display: none; }
+  .err { color: var(--danger); font-size: .875rem; margin-top: 6px; }
+  #pesan { color: var(--danger); font-weight: 600; margin: 0 0 12px; }
+  button {
+    font: inherit; font-weight: 600; width: 100%; padding: 14px; border: 0; border-radius: 10px;
+    background: var(--moss); color: #fff; cursor: pointer;
+  }
+  button:hover { background: var(--moss-dark); }
+  button:disabled { opacity: .6; cursor: wait; }
+  .done h2 { border: 0; margin: 0 0 8px; padding: 0; }
+  .loading { color: var(--muted); }
+  @media (prefers-reduced-motion: no-preference) { button { transition: background .15s; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Konfirmasi pencalonan Ketua dan Wakil Ketua Kader Adiwiyata</h1>
+    <p>MAN IC Lampung Timur. Formulir ini khusus untuk siswa yang namanya masuk hasil rekomendasi. Isi dengan jujur dan lengkap.</p>
+  </div>
+</header>
+
+<main>
+  <form id="form" novalidate>
+    <h2>Data diri</h2>
+    <fieldset>
+      <label class="q" for="nama">Nama lengkap</label>
+      <p class="hint">Pilih namamu dari daftar calon.</p>
+      <select id="nama" required><option value="">Memuat daftar nama...</option></select>
+    </fieldset>
+    <fieldset>
+      <label class="q" for="kelas">Kelas</label>
+      <input type="text" id="kelas" readonly placeholder="Terisi otomatis setelah memilih nama">
+    </fieldset>
+
+    <h2>Konfirmasi pencalonan</h2>
+    <fieldset id="f-peran">
+      <legend>Apakah kamu bersedia dicalonkan?</legend>
+      <label class="opt"><input type="radio" name="peran" value="Bersedia sebagai Ketua"> Bersedia sebagai Ketua</label>
+      <label class="opt"><input type="radio" name="peran" value="Bersedia sebagai Wakil Ketua"> Bersedia sebagai Wakil Ketua</label>
+      <label class="opt"><input type="radio" name="peran" value="Bersedia sebagai Ketua maupun Wakil Ketua"> Bersedia sebagai Ketua maupun Wakil Ketua</label>
+      <label class="opt"><input type="radio" name="peran" value="Tidak bersedia"> Tidak bersedia mencalonkan diri</label>
+    </fieldset>
+    <fieldset>
+      <label class="q" for="alasan">Alasan atau motivasi</label>
+      <p class="hint">Ceritakan singkat kenapa kamu bersedia, atau tidak bersedia.</p>
+      <textarea id="alasan"></textarea>
+    </fieldset>
+
+    <h2>Kesibukan akademik</h2>
+    <fieldset id="f-bina">
+      <legend>Apakah kamu mengikuti Bina Prestasi?</legend>
+      <label class="opt"><input type="radio" name="bina" value="Ya"> Ya</label>
+      <label class="opt"><input type="radio" name="bina" value="Tidak"> Tidak</label>
+      <div id="bina-detail" class="sub hidden">
+        <label class="q" for="bidang">Bidang Bina Prestasi yang diikuti</label>
+        <input type="text" id="bidang" placeholder="Contoh: OSN Matematika, KSM Biologi">
+      </div>
+    </fieldset>
+    <fieldset>
+      <label class="q" for="akademikLain">Kesibukan akademik lainnya (opsional)</label>
+      <p class="hint">Lomba, olimpiade, atau program akademik lain yang sedang kamu ikuti.</p>
+      <textarea id="akademikLain"></textarea>
+    </fieldset>
+
+    <h2>Organisasi di MAN IC Lampung Timur</h2>
+    <fieldset id="f-org">
+      <legend>Organisasi yang sedang kamu ikuti</legend>
+      <p class="hint">Pilih semua yang sesuai.</p>
+      <label class="opt"><input type="checkbox" name="org" value="OSIM"> OSIM</label>
+      <label class="opt"><input type="checkbox" name="org" value="MPS"> MPS</label>
+      <label class="opt"><input type="checkbox" name="org" value="Kader Adiwiyata"> Kader Adiwiyata</label>
+      <label class="opt"><input type="checkbox" name="org" value="Ekstrakurikuler atau klub lain"> Ekstrakurikuler atau klub lain</label>
+      <label class="opt"><input type="checkbox" name="org" value="Tidak mengikuti organisasi"> Tidak mengikuti organisasi apa pun</label>
+      <div class="sub">
+        <label class="q" for="orgLain">Organisasi lainnya (opsional)</label>
+        <input type="text" id="orgLain">
+      </div>
+    </fieldset>
+    <fieldset>
+      <label class="q" for="jabatan">Jabatan atau peran di organisasi tersebut</label>
+      <p class="hint">Contoh: Anggota Divisi Humas OSIM. Tulis tanda strip (-) jika tidak ada.</p>
+      <input type="text" id="jabatan">
+    </fieldset>
+    <fieldset id="f-dampak">
+      <legend>Apakah kesibukan di atas berpotensi mengganggu tugasmu jika terpilih?</legend>
+      <label class="opt"><input type="radio" name="dampak" value="Tidak mengganggu"> Tidak mengganggu</label>
+      <label class="opt"><input type="radio" name="dampak" value="Sedikit mengganggu, tapi bisa diatur"> Sedikit mengganggu, tapi bisa diatur</label>
+      <label class="opt"><input type="radio" name="dampak" value="Cukup mengganggu"> Cukup mengganggu</label>
+    </fieldset>
+
+    <h2>Pernyataan</h2>
+    <fieldset id="f-setuju">
+      <label class="opt"><input type="checkbox" id="setuju"> Saya menyatakan data di atas benar dan bersedia menjalankan amanah sesuai keputusan hasil pemilihan Kader Adiwiyata.</label>
+    </fieldset>
+
+    <p id="pesan" role="alert"></p>
+    <button type="submit" id="kirim">Kirim konfirmasi</button>
+  </form>
+
+  <div id="selesai" class="done hidden" role="status">
+    <h2>Konfirmasi terkirim</h2>
+    <p>Terima kasih, <strong id="selesai-nama"></strong>. Jawabanmu sudah tercatat dan akan dibaca panitia.</p>
+  </div>
+</main>
+
+<script>
+  var daftar = [];
+  var $ = function (id) { return document.getElementById(id); };
+  var radioVal = function (name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : '';
+  };
+
+  // Muat daftar calon dari sheet Pivot Table 1
+  google.script.run
+    .withSuccessHandler(function (data) {
+      daftar = data;
+      var sel = $('nama');
+      sel.innerHTML = '<option value="">Pilih nama</option>';
+      data.forEach(function (d) {
+        var o = document.createElement('option');
+        o.value = d.nama; o.textContent = d.nama;
+        sel.appendChild(o);
+      });
+    })
+    .withFailureHandler(function (err) {
+      $('nama').innerHTML = '<option value="">Gagal memuat daftar nama</option>';
+      $('pesan').textContent = 'Daftar nama tidak bisa dimuat: ' + err.message;
+    })
+    .getDaftarCalonKonfirmasi();
+
+  $('nama').addEventListener('change', function () {
+    var d = daftar.filter(function (x) { return x.nama === $('nama').value; })[0];
+    $('kelas').value = d ? d.kelas : '';
+  });
+
+  document.querySelectorAll('input[name="bina"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      $('bina-detail').classList.toggle('hidden', radioVal('bina') !== 'Ya');
+    });
+  });
+
+  // Jika memilih "Tidak mengikuti organisasi", pilihan lain dikosongkan
+  document.querySelectorAll('input[name="org"]').forEach(function (c) {
+    c.addEventListener('change', function () {
+      if (!c.checked) return;
+      var tidak = 'Tidak mengikuti organisasi';
+      document.querySelectorAll('input[name="org"]').forEach(function (o) {
+        if (o !== c && ((c.value === tidak) || o.value === tidak)) o.checked = false;
+      });
+    });
+  });
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var org = Array.prototype.map.call(
+      document.querySelectorAll('input[name="org"]:checked'), function (c) { return c.value; });
+    if ($('orgLain').value.trim()) org.push($('orgLain').value.trim());
+
+    var payload = {
+      nama: $('nama').value,
+      kelas: $('kelas').value,
+      peran: radioVal('peran'),
+      alasan: $('alasan').value.trim(),
+      binaPrestasi: radioVal('bina'),
+      bidangBina: $('bidang').value.trim(),
+      akademikLain: $('akademikLain').value.trim(),
+      organisasi: org.join(', '),
+      jabatan: $('jabatan').value.trim(),
+      dampak: radioVal('dampak'),
+      setuju: $('setuju').checked
+    };
+
+    var kurang = [];
+    if (!payload.nama) kurang.push('nama');
+    if (!payload.peran) kurang.push('konfirmasi pencalonan');
+    if (!payload.alasan) kurang.push('alasan atau motivasi');
+    if (!payload.binaPrestasi) kurang.push('Bina Prestasi');
+    if (payload.binaPrestasi === 'Ya' && !payload.bidangBina) kurang.push('bidang Bina Prestasi');
+    if (!payload.organisasi) kurang.push('organisasi');
+    if (!payload.jabatan) kurang.push('jabatan');
+    if (!payload.dampak) kurang.push('dampak kesibukan');
+    if (!payload.setuju) kurang.push('pernyataan');
+    if (kurang.length) {
+      $('pesan').textContent = 'Lengkapi dulu: ' + kurang.join(', ') + '.';
+      return;
+    }
+
+    $('pesan').textContent = '';
+    $('kirim').disabled = true;
+    $('kirim').textContent = 'Mengirim...';
+
+    google.script.run
+      .withSuccessHandler(function () {
+        $('form').classList.add('hidden');
+        $('selesai-nama').textContent = payload.nama;
+        $('selesai').classList.remove('hidden');
+        window.scrollTo(0, 0);
+      })
+      .withFailureHandler(function (err) {
+        $('pesan').textContent = err.message;
+        $('kirim').disabled = false;
+        $('kirim').textContent = 'Kirim konfirmasi';
+      })
+      .kirimKonfirmasi(payload);
+  });
+</script>
+</body>
+</html>
