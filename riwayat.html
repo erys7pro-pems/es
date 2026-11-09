@@ -240,7 +240,7 @@
       aktif = gagalLangsung;
       timer = setTimeout(function(){ bersih(); reject(new Error('Server terlalu lama merespons.')); }, ms || 20000);
       window[nama] = function(d){ bersih(); resolve(d); };
-      s.onerror = function(){ bersih(); reject(new Error('Tidak dapat terhubung ke server.')); };
+      s.onerror = function(){ bersih(); reject(new Error('Tidak dapat terhubung ke server (periksa koneksi internet, tanggal & jam perangkat, serta versi browser).')); };
       var q = [];
       for (var k in params) q.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
       q.push('callback=' + nama, 't=' + Date.now());
